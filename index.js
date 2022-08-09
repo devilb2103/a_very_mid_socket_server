@@ -1,37 +1,32 @@
 const express = require("express");
+var http = require("http");
 const app = express();
-const port = process.env.PORT || 6969;
+const port = process.env.PORT || 5000;
+var server = http.createServer(app);
+var io = require("socket.io")(server);
 
-app.use(express.json())
+//middlewre
+app.use(express.json());
+var clients = {};
 
-var chats = []
+io.on("connection", (socket) => {
+  console.log("connected: ", socket.id, "has joined");
+  socket.on("signin", (id) => {
+    clients[id] = socket;
+    console.log(Object.keys(clients));
+  });
+  //console.log(Object.keys(clients));
 
-function clearChat() {
-    if(chats.length != 0){
-        chats = [];
-    }
-}
-
-app.get("/", (req, res) => {
-    res.send("server is up and walking")
+  socket.on("message", (msg) => {
+    console.log(msg);
+    const message = {
+      user: msg.user,
+      message: msg.message
+    } 
+    socket.emit("broadcast", message);  
+  });
 });
 
-app.get("/chat", (req, res) => {
-    res.send(chats)
+server.listen(port, () => {
+  console.log("server started");
 });
-
-app.post("/schat", (req, res) => {
-    const msg = {
-        id: chats.length + 1,
-        name: req.body.name
-    };
-    if(msg.name == ">cls") {
-        clearChat()
-    }
-    else{
-        chats.push(msg)
-    }
-    res.send(msg);
-});
-
-app.listen(port, () => console.log("listening at port...."));
