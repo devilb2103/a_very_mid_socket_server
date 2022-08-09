@@ -4,7 +4,7 @@ const port = process.env.PORT || 6969;
 
 app.use(express.json())
 
-var chats = [1]
+var chats = []
 
 function clearChat() {
     if(chats.length != 0){
@@ -13,7 +13,7 @@ function clearChat() {
 }
 
 app.get("/", (req, res) => {
-    res.send("server is up and running")
+    res.send("server is up and walking")
 });
 
 app.get("/chat", (req, res) => {
