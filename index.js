@@ -17,13 +17,13 @@ io.on("connection", (socket) => {
   });
   //console.log(Object.keys(clients));
 
-  socket.on("message", (msg) => {
+   socket.on("message", (msg) => {
     console.log(msg);
     const message = {
       user: msg.user,
       message: msg.message
     } 
-    socket.emit("broadcast", message);  
+    io.sockets.emit("broadcast", message);  
   });
 });
 
