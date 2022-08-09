@@ -7,23 +7,33 @@ var io = require("socket.io")(server);
 
 //middlewre
 app.use(express.json());
-var clients = {};
+var users = {};
+
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
+}
 
 io.on("connection", (socket) => {
-  console.log("connected: ", socket.id, "has joined");
+  //console.log("connected: ", socket.id, "has joined");
   socket.on("signin", (id) => {
-    clients[id] = socket;
-    console.log(Object.keys(clients));
+    users[socket.id] = id;
+    io.sockets.emit("userChange", Object.values(users));
+    //console.log(users);
   });
-  //console.log(Object.keys(clients));
 
-   socket.on("message", (msg) => {
-    console.log(msg);
+  socket.on("message", (msg) => {
+    //console.log(msg);
     const message = {
       user: msg.user,
       message: msg.message
     } 
-    io.sockets.emit("broadcast", message);  
+    io.sockets.emit("broadcast", message);
+  });
+
+  socket.on("clientDisconnect", (id) => {
+    delete users[socket.id];
+    io.sockets.emit("userChange", Object.values(users));
+    //console.log(users);
   });
 });
 
