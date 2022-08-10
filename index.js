@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
   socket.on("signin", (id) => {
     users[socket.id] = id;
     io.sockets.emit("userChange", Object.values(users));
-    //console.log(users);
+    console.log(users);
   });
 
   socket.on("message", (msg) => {
@@ -30,10 +30,10 @@ io.on("connection", (socket) => {
     io.sockets.emit("broadcast", message);
   });
 
-  socket.on("clientDisconnect", (id) => {
+  socket.on("disconnect", (id) => {
     delete users[socket.id];
     io.sockets.emit("userChange", Object.values(users));
-    //console.log(users);
+    console.log(users);
   });
 });
 
