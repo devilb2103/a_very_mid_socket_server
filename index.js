@@ -18,6 +18,7 @@ io.on("connection", (socket) => {
   socket.on("signin", (id) => {
     users[socket.id] = id;
     io.sockets.emit("userChange", Object.values(users));
+    socket.emit("socketId", socket.id);
     console.log(users);
   });
 
@@ -25,6 +26,7 @@ io.on("connection", (socket) => {
     //console.log(msg);
     const message = {
       user: msg.user,
+      id: msg.id,
       message: msg.message
     } 
     io.sockets.emit("broadcast", message);
