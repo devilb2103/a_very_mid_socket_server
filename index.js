@@ -27,7 +27,8 @@ io.on("connection", (socket) => {
     const message = {
       user: msg.user,
       id: msg.id,
-      message: msg.message
+      message: msg.message,
+      time: msg.time
     } 
     io.sockets.emit("broadcast", message);
   });
