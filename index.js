@@ -8,6 +8,7 @@ var io = require("socket.io")(server);
 //middlewre
 app.use(express.json());
 var users = {};
+var messages = [];
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
@@ -29,8 +30,18 @@ io.on("connection", (socket) => {
       id: msg.id,
       message: msg.message,
       time: msg.time
-    } 
-    io.sockets.emit("broadcast", message);
+    }
+    if(message.message == "clear123"){
+      messages = [];
+    }
+    else{
+      messages.push(message);
+      io.sockets.emit("broadcast", message);
+    }
+  });
+
+  socket.on("requestOldMessages", (id) => {
+    socket.emit("retrieveOldMessages", messages);
   });
 
   socket.on("disconnect", (id) => {
