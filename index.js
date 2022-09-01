@@ -1,5 +1,6 @@
 const express = require("express");
 var http = require("http");
+const { type } = require("os");
 const app = express();
 const port = process.env.PORT || 5000;
 var server = http.createServer(app);
@@ -9,6 +10,7 @@ var io = require("socket.io")(server);
 app.use(express.json());
 var users = {};
 var messages = [];
+var typers = {};
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
@@ -44,9 +46,29 @@ io.on("connection", (socket) => {
     socket.emit("retrieveOldMessages", messages);
   });
 
+  socket.on("addTyper", (id) => {
+    //send a typing broadcast
+    typers[socket.id] = id;
+    io.sockets.emit("typers", Object.values(typers));
+    console.log(typers);
+  });
+
+  socket.on("removeTyper", (id) => {
+    //send a typing broadcast
+    delete typers[socket.id];
+    io.sockets.emit("typers", Object.values(typers));
+    console.log(typers);
+  });
+
   socket.on("disconnect", (id) => {
     delete users[socket.id];
     io.sockets.emit("userChange", Object.values(users));
+    try {
+      delete typers[socket.id];
+    }
+    catch{
+      console.log("LOL ERROR EAT DUST");
+    }
     console.log(users);
   });
 });
