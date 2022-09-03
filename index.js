@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
     io.sockets.emit("userChange", Object.values(users));
     try {
       delete typers[socket.id];
+      io.sockets.emit("typers", Object.values(typers));
     }
     catch{
       console.log("LOL ERROR EAT DUST");
