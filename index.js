@@ -11,6 +11,7 @@ app.use(express.json());
 var users = {};
 var messages = [];
 var typers = {};
+var typersOld = {};
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
@@ -22,7 +23,6 @@ io.on("connection", (socket) => {
     users[socket.id] = id;
     io.sockets.emit("userChange", Object.values(users));
     socket.emit("socketId", socket.id);
-    console.log(users);
   });
 
   socket.on("message", (msg) => {
@@ -50,14 +50,12 @@ io.on("connection", (socket) => {
     //send a typing broadcast
     typers[socket.id] = id;
     io.sockets.emit("typers", Object.values(typers));
-    console.log(typers);
   });
 
   socket.on("removeTyper", (id) => {
     //send a typing broadcast
     delete typers[socket.id];
     io.sockets.emit("typers", Object.values(typers));
-    console.log(typers);
   });
 
   socket.on("disconnect", (id) => {
@@ -70,7 +68,6 @@ io.on("connection", (socket) => {
     catch{
       console.log("LOL ERROR EAT DUST");
     }
-    console.log(users);
   });
 });
 
